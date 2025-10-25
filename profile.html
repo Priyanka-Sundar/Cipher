@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Profile - Cipher</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.profile-box{max-width:400px;margin:auto;}
+.profile-pic{width:120px;height:120px;border-radius:50%;border:3px solid #ff99c8;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<nav class="sidebar">
+  <div class="nav-title">Cipher</div>
+  <ul>
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="detector.html" class="nav-link">Detector</a></li>
+    <li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="profile.html" class="nav-link active">Profile</a></li>
+    <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+</nav>
+
+<main class="content">
+  <section class="panel section-profile">
+    <h2>Profile</h2>
+    <div class="profile-box">
+      <img src="" id="profilePic" class="profile-pic" alt="Profile Pic">
+      <input type="file" id="picInput" accept="image/*"><br>
+      <input type="text" id="usernameInput" placeholder="Change Username"><br>
+      <button class="btn" id="saveProfile">Save</button>
+      <p id="profileFeedback" style="font-size:10px;color:#e0559d;"></p>
+    </div>
+  </section>
+</main>
+
+<script>
+if(!localStorage.getItem('cipher_current_user')) window.location.href="login.html";
+const user = localStorage.getItem('cipher_current_user');
+let users = JSON.parse(localStorage.getItem('cipher_users')||'{}');
+const currentUser = users[user];
+
+const profilePicEl = document.getElementById('profilePic');
+const usernameInput = document.getElementById('usernameInput');
+const picInput = document.getElementById('picInput');
+const feedback = document.getElementById('profileFeedback');
+
+profilePicEl.src = currentUser.profilePic||'https://i.imgur.com/3vIY3NT.png';
+usernameInput.value = user;
+
+document.getElementById('saveProfile').addEventListener('click',()=>{
+  const newName = usernameInput.value.trim();
+  if(newName && newName !== user){
+    users[newName]=users[user]; 
+    delete users[user];
+    localStorage.setItem('cipher_current_user', newName);
+    users[newName].username=newName;
+    feedback.textContent="Username updated!";
+  }
+  const file = picInput.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload=e=>{
+      users[newName||user].profilePic=e.target.result;
+      profilePicEl.src=e.target.result;
+      feedback.textContent="Profile pic updated!";
+      localStorage.setItem('cipher_users', JSON.stringify(users));
+    };
+    reader.readAsDataURL(file);
+  } else {
+    localStorage.setItem('cipher_users', JSON.stringify(users));
+  }
+});
+</script>
+</body>
+</html>

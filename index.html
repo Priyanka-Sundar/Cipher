@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cipher — Pixel Chaos Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Smaller aquarium scene */
+.scene-wrap {
+  position:relative;
+  width:100%;
+  height:450px;
+  border:3px solid var(--pink-border);
+  border-radius:8px;
+  overflow:hidden;
+  background: url('https://i.pinimg.com/1200x/bf/97/c1/bf97c16704567d42c616d2fd6a376072.jpg') center/cover no-repeat;
+  margin: 32px auto 0;
+}
+
+/* Overlay to reduce exposure */
+.scene-wrap::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.08); /* adjust opacity 0.25–0.45 as needed */
+  z-index:1;
+}
+
+/* Keep typewriter text above overlay */
+#typewriter, #audioToggle {
+  position:absolute;
+  z-index:2;
+}
+
+/* Centered typewriter text */
+#typewriter {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  color:ghostwhite;
+  font-size:20px;
+  text-align:center;
+  max-width:500px;
+  line-height:1.6;
+  z-index:10;
+  text-shadow:2px 2px 6px rgba(0,0,0,0.6);
+}
+
+/* Audio icon */
+#audioToggle {
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  cursor:pointer;
+  z-index:20;
+  border:2px solid var(--pink-border);
+  box-shadow:0 3px 0 rgba(0,0,0,0.05);
+}
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="nav-title">Cipher</div>
+    <ul>
+      <li><a href="index.html" class="nav-link active">Home</a></li>
+      <li><a href="detector.html" class="nav-link">Detector</a></li>
+      <li><a href="statistics.html" class="nav-link">Stats</a></li>
+      <li><a href="profile.html" class="nav-link">Profile</a></li>
+      <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main -->
+  <main class="content">
+    <section class="panel section-home">
+      <img class="header-banner" src="https://i.pinimg.com/1200x/e0/9c/5b/e09c5b40ff625aeeecd20e24c67c9d96.jpg" alt="header">
+
+      <div class="home-text">
+        <h1 class="home-title">Cipher</h1>
+        <p class="home-subtitle">Pink Pixel Lab • Decode Reality</p>
+        <p class="home-desc">
+          Welcome, detective!<br>
+          Upload an image in the detector to uncover deepfakes. Explore gallery, track your stats, and level up your streaks!
+        </p>
+      </div>
+
+      <div class="scene-wrap" id="sceneWrap">
+        <div id="typewriter"></div>
+        <img src="https://i.pinimg.com/736x/a3/b4/a8/a3b4a81e1fc1c8c94868533b895ad368.jpg" id="audioToggle" alt="Audio Toggle">
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+if(!localStorage.getItem('cipher_current_user')) window.location.href='login.html';
+
+/* Typewriter text loop */
+const texts = [
+  "Detect deepfakes quickly and accurately using AI-powered detection.",
+  "Upload your image and our system will analyze authenticity.",
+  "Track your progress, explore the gallery, and level up your detective streaks."
+];
+const node = document.getElementById('typewriter');
+let i = 0;
+function typeLine(text, speed=25, done){
+  let j=0;
+  const t=setInterval(()=>{
+    node.textContent=text.slice(0,j);
+    j++;
+    if(j>text.length){clearInterval(t); setTimeout(done, 900);}
+  }, speed);
+}
+function loop(){
+  typeLine(texts[i],25,()=>{i=(i+1)%texts.length;loop();});
+}
+loop();
+
+/* Background music toggle */
+const audioIcon=document.getElementById('audioToggle');
+const bgAudio=new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
+bgAudio.loop=true; bgAudio.volume=0.1; bgAudio.playbackRate=0.95;
+bgAudio.play().catch(()=>console.warn("Autoplay blocked"));
+audioIcon.addEventListener('click',()=>{if(bgAudio.paused) bgAudio.play(); else bgAudio.pause();});
+</script>
+</body>
+</html>

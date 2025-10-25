@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Statistics - Cipher</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.streak-box{margin-top:12px; padding:12px; border:3px solid #ff99c8; background:#fff0f6; border-radius:8px;}
+.streak-msg{font-size:12px; color:#e0559d;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<nav class="sidebar">
+  <div class="nav-title">Cipher</div>
+  <ul>
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="detector.html" class="nav-link">Detector</a></li>
+    <li><a href="statistics.html" class="nav-link active">Stats</a></li>
+    <li><a href="profile.html" class="nav-link">Profile</a></li>
+    <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+</nav>
+
+<main class="content">
+  <section class="panel section-stats">
+    <h2>Your Statistics</h2>
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-label">Uploads</div><div class="stat-val" id="statUploads">0</div></div>
+      <div class="stat"><div class="stat-label">Likely Real</div><div class="stat-val" id="statReal">0</div></div>
+      <div class="stat"><div class="stat-label">Likely Fake</div><div class="stat-val" id="statFake">0</div></div>
+    </div>
+    <div class="streak-box">
+      <div>Current Streak: <span id="streakVal">0</span> day(s)</div>
+      <div class="streak-msg" id="streakMsg"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+if(!localStorage.getItem('cipher_current_user')) window.location.href="login.html";
+const user = localStorage.getItem('cipher_current_user');
+const users = JSON.parse(localStorage.getItem('cipher_users')||'{}');
+const currentUser = users[user] || {streak:0};
+
+// Render streaks
+document.getElementById('streakVal').textContent = currentUser.streak || 0;
+const msgEl = document.getElementById('streakMsg');
+if(currentUser.streak>=3) msgEl.textContent="Great job! You're on a hot streak 🔥 Keep spotting deepfakes!";
+else if(currentUser.streak===2) msgEl.textContent="Nice! Two days in a row. Can you make it three?";
+else if(currentUser.streak===1) msgEl.textContent="Good start! Let's continue tomorrow!";
+else msgEl.textContent="Start uploading images to begin your streak!";
+
+// Placeholder stats (can integrate detector stats)
+document.getElementById('statUploads').textContent = currentUser.uploads||0;
+document.getElementById('statReal').textContent = currentUser.real||0;
+document.getElementById('statFake').textContent = currentUser.fake||0;
+</script>
+</body>
+</html>

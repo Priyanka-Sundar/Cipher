@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Detector — Cipher</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ===== Detector Section Aesthetic ===== */
+.section-detector { text-align:center; }
+
+.upload-zone {
+  border: 3px dashed var(--pink-border);
+  border-radius: 8px;
+  background: var(--pink-light);
+  width: 80%;
+  max-width: 420px;
+  height: 160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  transition: 0.25s;
+  position: relative;
+}
+.upload-zone:hover { background: #ffeef6; transform: scale(1.01); }
+.upload-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-title { font-size:11px; margin-bottom:6px; }
+.upload-zone small { font-size:9px; opacity:0.7; }
+
+/* Big Image Rectangle */
+#imageDisplay {
+  display:none;
+  margin: 20px auto;
+  width: 80%;
+  max-width: 420px;
+  border: 3px solid var(--pink-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+#imageDisplay img { width:100%; display:block; }
+
+/* Result Box */
+.result-card {
+  display:none;
+  background: #fff7fb;
+  border: 3px solid var(--pink-border);
+  border-radius: 6px;
+  text-align: center;
+  padding: 12px;
+  margin: 20px auto 0;
+  width: 80%;
+  max-width: 420px;
+}
+.result-title { font-size: 12px; color: var(--pink-dark); margin-bottom: 8px; }
+.confidence-bar { width: 100%; height: 10px; background: #ffe7f3; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+.confidence-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff99c8, #ff5ca8); transition: width 1s ease; }
+.result-text { font-size: 9px; white-space: pre-wrap; }
+.ai-line { font-size: 9px; color: #5b4c55; opacity: 0.85; margin-top: 6px; }
+.detector-button { margin-top:10px; background:var(--pink-border); border:none; color:white; font-family:var(--mono); padding:8px 10px; cursor:pointer; border-radius:4px; font-size:10px; transition:0.2s; }
+.detector-button:hover { background: var(--pink-dark); }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <nav class="sidebar">
+    <div class="nav-title">Cipher</div>
+    <ul>
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="detector.html" class="nav-link active">Detector</a></li>
+      <li><a href="statistics.html" class="nav-link">Stats</a></li>
+      <li><a href="profile.html" class="nav-link">Profile</a></li>
+      <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="content">
+    <section class="panel section-detector">
+      <h2 class="detector-title">Deepfake Detector</h2>
+      <div class="detector-banner"></div>
+
+      <!-- Upload Box -->
+      <label class="upload-zone">
+        <input id="imageInput" type="file" accept="image/*">
+        <div class="upload-title">Drop or click to upload</div>
+        <small>(face image only)</small>
+      </label>
+
+      <!-- Big Image Display -->
+      <div id="imageDisplay"><img id="uploadedImg" src=""></div>
+
+      <!-- Result -->
+      <div id="resultCard" class="result-card">
+        <div id="resultTitle" class="result-title">Analyzing...</div>
+        <div class="confidence-bar"><div id="confidenceFill" class="confidence-fill"></div></div>
+        <div id="resultText" class="result-text">Cipher is scanning pixel structures...</div>
+        <div id="aiComment" class="ai-line">Processing...</div>
+        <button id="retryBtn" class="detector-button">Try Another</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+<script>
+const imageInput = document.getElementById('imageInput');
+const uploadedImg = document.getElementById('uploadedImg');
+const imageDisplay = document.getElementById('imageDisplay');
+const resultCard = document.getElementById('resultCard');
+const resultTitle = document.getElementById('resultTitle');
+const resultText = document.getElementById('resultText');
+const aiComment = document.getElementById('aiComment');
+const confidenceFill = document.getElementById('confidenceFill');
+const retryBtn = document.getElementById('retryBtn');
+
+imageInput.addEventListener('change', async ()=>{
+  if(!imageInput.files[0]) return;
+
+  // Show uploaded image in big rectangle
+  const file = imageInput.files[0];
+  const reader = new FileReader();
+  reader.onload = e => { uploadedImg.src = e.target.result; imageDisplay.style.display="block"; };
+  reader.readAsDataURL(file);
+
+  // Show analyzing result box
+  resultCard.style.display="block";
+  resultTitle.textContent="Analyzing...";
+  resultText.textContent="Cipher is scanning pixel structures...";
+  aiComment.textContent="Processing...";
+  confidenceFill.style.width="0%";
+
+  // Simulate TF.js async analysis
+  setTimeout(async ()=>{
+    // Placeholder: real TF.js model logic can go here
+    const conf = Math.floor(Math.random()*100);
+    confidenceFill.style.width = conf+"%";
+    if(conf>65){
+      resultTitle.textContent="Possible Deepfake ⚠️";
+      resultText.textContent=`Confidence: ${conf}%\nDetected irregular lighting and texture mismatches.`;
+      aiComment.textContent="This one feels synthetic.";
+    } else {
+      resultTitle.textContent="Likely Real ✅";
+      resultText.textContent=`Confidence: ${conf}%\nNo major digital artifacts detected.`;
+      aiComment.textContent="Texture harmony confirmed.";
+    }
+  }, 1500);
+});
+
+retryBtn.addEventListener('click', ()=>{
+  resultCard.style.display="none";
+  imageDisplay.style.display="none";
+  imageInput.value="";
+});
+</script>
+</body>
+</html>

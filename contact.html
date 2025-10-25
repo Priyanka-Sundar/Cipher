@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Contact - Cipher</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrapper">
+
+<nav class="sidebar">
+  <div class="nav-title">Cipher</div>
+  <ul>
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="detector.html" class="nav-link">Detector</a></li>
+    <li><a href="statistics.html" class="nav-link">Stats</a></li>
+    <li><a href="profile.html" class="nav-link">Profile</a></li>
+    <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+    <li><a href="contact.html" class="nav-link active">Contact</a></li>
+  </ul>
+</nav>
+
+<main class="content">
+  <section class="panel section-contact">
+    <h2>Contact / Report Issues</h2>
+    <form id="contactForm">
+      <input type="email" id="email" placeholder="Your email" required><br>
+      <textarea id="issue" rows="4" placeholder="Describe your issue or feedback" required></textarea><br>
+      <button class="btn" type="submit">Send</button>
+      <p id="contactFeedback" style="font-size:10px;color:#e0559d;"></p>
+    </form>
+  </section>
+</main>
+
+<script>
+if(!localStorage.getItem('cipher_current_user')) window.location.href="login.html";
+const form = document.getElementById('contactForm');
+const feedback = document.getElementById('contactFeedback');
+
+form.addEventListener('submit', e=>{
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const issue = document.getElementById('issue').value.trim();
+  if(!email || !issue){ feedback.textContent="Fill all fields"; return; }
+  const list = JSON.parse(localStorage.getItem('cipher_issues')||'[]');
+  list.push({email, issue, ts:new Date().toISOString()});
+  localStorage.setItem('cipher_issues', JSON.stringify(list));
+  feedback.textContent="Thanks for your feedback!";
+  form.reset();
+  setTimeout(()=>feedback.textContent='',2000);
+});
+</script>
+</body>
+</html>
